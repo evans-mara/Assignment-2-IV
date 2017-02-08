@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Assignment 2</title>
+</head>
+<body>
+<script src="processing-1.3.6.min.js"></script>
+<script type="text/processing" data-processing-target="processing-canvas">
+
+int graph = 1;
+
+public class bars {
+  private String n;
+  private int h;
+  public bars(String n, int h) {
+    this.n = n;
+    this.h = h;
+  }
+}
+
+public class p{
+  private float x;
+  private float y;
+  public p(float x, float y){
+    this.x = x;
+    this.y = y;
+  }
+}
+
+float source = 20;
+float dest = 300;
+void setup() {
+  size(1000, 900);
+  background(#B2A2A2);
+  stroke(0);
+  fill(0);
+  //textSize(5);
+  frameRate(7);
+}
+
+void draw(){
+  bars b [] = new bars[15];
+  b[0]= new bars("Apple", 12);
+  b[1]= new bars("Pear", 4);
+  b[2]= new bars("Orange", 13);
+  b[3]= new bars("Cherry", 13);
+  b[4]= new bars("Blueberry", 8);
+  b[5]= new bars("Banana", 2);
+  b[6]= new bars("Peach", 13);
+  b[7]= new bars("Lemon", 5);
+  b[8]= new bars("Watermelon", 15);
+  b[9]= new bars("Lime", 24);
+  b[10]= new bars("Mango", 16);
+  b[11]= new bars("Grape", 10);
+  b[12]= new bars("Kiwi", 1);
+  b[13]= new bars("Pineapple", 15);
+  b[14]= new bars("Date", 110);
+
+fill(#778899);
+  stroke(0);
+  rectMode(CENTER);
+  rect(width*.9, height*.08, width*.09, height*.04);
+  textSize(20);
+  fill(0);
+  text("change", width*.865, height*.085);
+  rectMode(CORNER);
+
+int maxY = 0;
+  for (int i = 0; i <b.length; i++) {
+    //println("b["+ i + "].h: " + b[i].h);
+    if (b[i].h>maxY) {
+      maxY = b[i].h;
+    }
+  }
+
+  float Y0 = 900*.85;
+  float mY = 900*.1;
+  //print(mY);
+  float X0 = 1000*.1;
+  float mX = 1000*.85;
+
+  //drawing axis
+  stroke(0);
+  line(X0, Y0, mX, Y0);
+  line(X0, Y0, X0, mY);
+  text("Name", width*.45, Y0+100);
+  text("Price", width*.05-50, Y0/2);
+
+  int maxGraph = parseInt(Math.round((maxY + 5)/ 10.0) * 10.0);
+  //println(maxGraph);
+  float changeY = (Y0-mY)/(maxGraph/10);
+  float start = Y0;
+  float stop = mY;
+  while (stop<start) {
+      text(maxGraph, X0-50, stop);
+      stop = stop + changeY;
+      maxGraph = maxGraph - 10;
+  }
+  start = mX;
+  stop = X0;
+  float changeX = (X0-mX)/b.length;
+  float c = X0 + ((mX-X0)/b.length)/2;
+  for(int i = 0; i<b.length; i++){
+    pushMatrix();
+    translate(stop+20, Y0+20);
+    rotate(45);
+    translate(-stop, -(Y0+20));
+    text(b[i].n, stop, Y0+20);
+    popMatrix();
+    stop = stop - changeX;
+  }
+  //finished drawing
+  //start bar graph
+  if(graph == 1){
+    float stay = X0;
+    X0 = X0+20;
+    for(int i = 0; i<b.length; i++){
+      fill(#DCDCDC);
+      stroke(0);
+      rect(X0, Y0, 10, -(b[i].h*(changeY/12)));
+      float q = (b[i].h*(changeY/10.5));
+      if(i==14){
+        q = 176;
+      }
+      if (mouseY < Y0 && mouseY > q){
+         if(mouseX > X0 && mouseX <X0+10){
+           pushMatrix();
+           translate(X0, Y0-(b[i].h*(changeY/10.5))-15);
+           rotate(-45);
+           translate(-X0, -(Y0-(b[i].h*(changeY/10.5))-15));
+           fill(250);
+           text("("+b[i].n+","+b[i].h+")", X0-20, Y0-(b[i].h*(changeY/10.5))-15);
+           popMatrix();
+           fill(250);
+           rect(X0, Y0, 10, -(b[i].h*(changeY/12)));
+           //erase(x,y,gH,mV);
+         }
+      }
+      X0 = X0+(mX-stay)/(b.length);
+    }
+  }
+  //start line graph
+  else if(graph==2){
+    Y0 = height*.85;
+    mY = height*.1;
+    X0 = width*.1;
+    mX = width*.85;
+    
+    p [] point = new p [b.length];    
+    
+    float stay = X0;
+    X0 = X0+20;
+    for(int i = 0; i<b.length; i++){
+      fill(#DCDCDC);
+      stroke(0);
+      ellipse(X0, Y0-(b[i].h*(changeY/10.5)), 10, 10);
+      point[i] = new p(X0, Y0-(b[i].h*(changeY/10.5)));
+      if (mouseY < Y0-(b[i].h*(changeY/10.5))+5 && mouseY > Y0-(b[i].h*(changeY/10.5))-5){
+         if(mouseX > X0 && mouseX <X0+10){
+           pushMatrix();
+           translate(X0, Y0-(b[i].h*(changeY/10.5))-15);
+           rotate(-45);
+           translate(-X0, -(Y0-(b[i].h*(changeY/10.5))-15));
+           fill(250);
+           text("("+b[i].n+","+b[i].h+")", X0-20, Y0-(b[i].h*(changeY/10.5))-15);
+           popMatrix();
+           fill(250);
+           ellipse(X0, Y0-(b[i].h*(changeY/10.5)), 10, 10);
+         }
+      }
+      X0 = X0+(mX-stay)/(b.length);
+    }
+    for(int i = 0; i<point.length-1; i++){
+      line(point[i].x, point[i].y, point[i+1].x, point[i+1].y); 
+    }
+  }
+  else if(graph==3){
+    Y0 = height*.85;
+    mY = height*.1;
+    X0 = width*.1;
+    mX = width*.85;
+    
+    float stay = X0;
+    X0 = X0+20;
+    for(int i = 0; i<b.length; i++){
+      fill(#DCDCDC);
+      stroke(0);
+      float f = (b[i].h*(changeY/10.5))/PI;
+      double r = Math.sqrt(f);
+      float g = (float)r;
+      ellipse(X0, Y0-(b[i].h*(changeY/10.5)), g*g, g*g);
+      if (mouseY < Y0-(b[i].h*(changeY/10.5))+((g*g)/2) && mouseY > Y0-(b[i].h*(changeY/10.5))-((g*g)/2)){
+         if(mouseX > X0 && mouseX <X0+g*g){
+           fill(250);
+           ellipse(X0, Y0-(b[i].h*(changeY/10.5)), g*g, g*g);
+           pushMatrix();
+           fill(0);
+           translate(X0, Y0-(b[i].h*(changeY/10.5))-15);
+           rotate(-45);
+           translate(-X0, -(Y0-(b[i].h*(changeY/10.5))-15));
+           fill(0);
+           text("("+b[i].n+","+b[i].h+")", X0-20, Y0-(b[i].h*(changeY/10.5))-15);
+           popMatrix();
+         }
+      }
+      X0 = X0+(mX-stay)/(b.length);
+    }
+  }
+}
+
+void mouseClicked() {
+  boolean tog = false;
+  if (mouseX>1000*.855 && mouseX<1000*.945) {
+    if (mouseY>900*.06 && mouseY<900*.10) {
+      if (graph == 1 && !tog) {
+        //clear();
+        graph++;
+        background(#B2A2A2);
+        tog = !tog;
+      } else if (graph == 2 && !tog) {
+        //clear();
+        graph = graph +1;
+        background(#B2A2A2);
+        tog = !tog;
+      } else if (graph == 3 && !tog) {
+        //clear();
+        graph = 1;
+        background(#B2A2A2);
+        tog = !tog;
+      }
+    }
+  }
+}
+
+
+</script>
+<canvas id="processing-canvas"> </canvas>
+</body>
+
+</html>
